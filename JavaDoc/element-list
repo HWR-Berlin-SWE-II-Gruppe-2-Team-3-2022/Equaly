@@ -1,0 +1,8 @@
+org.hwr.genderly
+org.hwr.genderly.controller
+org.hwr.genderly.controller.exchanger
+org.hwr.genderly.controller.textMerger
+org.hwr.genderly.controller.textSplitter
+org.hwr.genderly.model
+org.hwr.genderly.model.dbHandler
+org.hwr.genderly.model.tickets
