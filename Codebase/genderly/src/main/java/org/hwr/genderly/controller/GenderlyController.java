@@ -98,4 +98,28 @@ public class GenderlyController {
         }
         return "redirect:/";
     }
+
+    @GetMapping("/add")
+    public String add(Model model) {
+        // replaces placeholder appName in html with content of appName
+        model.addAttribute(thyme.APPNAME, appName);
+
+        ArrayList<String> genderList = new ArrayList<String>(Arrays.asList("m", "f", "n"));
+        ArrayList<String> fallList = new ArrayList<String>(Arrays.asList("Nominativ", "Genitiv", "Dativ", "Akkusativ"));
+
+        model.addAttribute("genderList", genderList);
+        model.addAttribute("fallList", fallList);
+        model.addAttribute("dbTicket", new DBTicket());
+        return "add";
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST, params = "action=add")
+    public String add(@ModelAttribute DBTicket dbTicket, Model model) {
+
+        if (dbTicket.isNotEmpty()) {
+            db.addSubstantive(dbTicket);
+        }
+
+        return "redirect:/add";
+    }
 }
