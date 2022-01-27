@@ -3,5 +3,5 @@ window.onload = function(){
 };
 
 function loadGitHub() {
-    window.open('https://github.com/HWR-Berlin-SWE-I-Gruppe-2-Team-3-2021', '_blank').focus();
+    window.open('https://github.com/HWR-Berlin-SWE-II-Gruppe-2-Team-3-2022', '_blank').focus();
 }
