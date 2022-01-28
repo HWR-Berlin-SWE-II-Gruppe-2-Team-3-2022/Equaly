@@ -157,6 +157,21 @@ public class DBHandlerImpl implements DBHandler {
         }
     }
 
+    /**
+     * Affiliated with 'addSubstantive', processes
+     * input from HTML-form, turns into correct Code
+     * for DB-Table interaction
+     * @param sprache - comes from HTML form
+     * @return Language code used to address correct tables
+     */
+    private String getlang(String sprache) {
+        switch(sprache) {
+            case "Deutsch": return "DE";
+            case "Englisch": return "EN";
+        }
+        return null;
+    }
+
     @Override
     public void addSubstantive(DBTicket dbTicket) {
         // Look if added word is there already (with word, case and gender all together)
@@ -165,34 +180,36 @@ public class DBHandlerImpl implements DBHandler {
         // Look if replacement word is there already (with word, case and gender all together)
         int replacementID;
         boolean replacementExistedAlready;
+        String language = getlang(dbTicket.getSprache());
+
         try {
-            ResultSet ws = conn.createStatement().executeQuery("SELECT Wort_ID FROM Wort_DE WHERE Wort = '" + dbTicket.getWort() + "' AND Fall = '" + dbTicket.getFall() + "' AND Gender = '" + dbTicket.getGender() + "' AND Numerus = '"+ dbTicket.getNumerus() + "' LIMIT 1;");
+            ResultSet ws = conn.createStatement().executeQuery("SELECT Wort_ID FROM Wort_" + language + " WHERE Wort = '" + dbTicket.getWort() + "' AND Fall = '" + dbTicket.getFall() + "' AND Gender = '" + dbTicket.getGender() + "' AND Numerus = '"+ dbTicket.getNumerus() + "' LIMIT 1;");
             if (ws.next()) {
                 // if so: note its ID
                 wordID = ws.getInt(1);
                 wordExistedAlready = true;
             } else {
                 // if not: add it and note this new entry's ID
-                wordID = conn.createStatement().executeQuery("SELECT MAX(Wort_ID) FROM Wort_DE;").getInt(1) + 1;
-                conn.createStatement().executeUpdate("INSERT INTO Wort_DE VALUES (" + wordID + ", '" + dbTicket.getFall() + "' ,'" + dbTicket.getWort() + "', '" + dbTicket.getGender() + "', '" + dbTicket.getNumerus() + "');");
+                wordID = conn.createStatement().executeQuery("SELECT MAX(Wort_ID) FROM Wort_" + language + ";").getInt(1) + 1;
+                conn.createStatement().executeUpdate("INSERT INTO Wort_" + language + " VALUES (" + wordID + ", '" + dbTicket.getFall() + "' ,'" + dbTicket.getWort() + "', '" + dbTicket.getGender() + "', '" + dbTicket.getNumerus() + "');");
                 wordExistedAlready = false;
             }
 
-            ResultSet rs = conn.createStatement().executeQuery("SELECT Wort_ID FROM Wort_DE WHERE Wort = '" + dbTicket.getErsatzWort() + "' AND Fall = '" + dbTicket.getFall() + "' AND Gender = '" + dbTicket.getErsatzGender() + "' AND Numerus = '" + dbTicket.getNumerus() + "' LIMIT 1;");
+            ResultSet rs = conn.createStatement().executeQuery("SELECT Wort_ID FROM Wort_" + language + " WHERE Wort = '" + dbTicket.getErsatzWort() + "' AND Fall = '" + dbTicket.getFall() + "' AND Gender = '" + dbTicket.getErsatzGender() + "' AND Numerus = '" + dbTicket.getNumerus() + "' LIMIT 1;");
             if (rs.next()) {
                 // if so: note its ID
                 replacementID = rs.getInt(1);
                 replacementExistedAlready = true;
             } else {
                 // if not: add it and note this new entry's ID
-                replacementID = conn.createStatement().executeQuery("SELECT MAX(Wort_ID) FROM Wort_DE;").getInt(1) + 1;
-                conn.createStatement().executeUpdate("INSERT INTO Wort_DE VALUES (" + replacementID + ", '" + dbTicket.getFall() + "' ,'" + dbTicket.getErsatzWort() + "', '" + dbTicket.getErsatzGender() + "', '" + dbTicket.getNumerus() + "');");
+                replacementID = conn.createStatement().executeQuery("SELECT MAX(Wort_ID) FROM Wort_" + language + ";").getInt(1) + 1;
+                conn.createStatement().executeUpdate("INSERT INTO Wort_" + language + " VALUES (" + replacementID + ", '" + dbTicket.getFall() + "' ,'" + dbTicket.getErsatzWort() + "', '" + dbTicket.getErsatzGender() + "', '" + dbTicket.getNumerus() + "');");
                 replacementExistedAlready = false;
             }
 
             // if either word or replacement were unknown to the DB: add their IDs to the m:n table as new interconnection
             if (!(replacementExistedAlready && wordExistedAlready)) {
-                conn.createStatement().executeUpdate("INSERT INTO Wort_ersetzt_Wort_DE VALUES (" + wordID + ", " + replacementID + ");");
+                conn.createStatement().executeUpdate("INSERT INTO Wort_ersetzt_Wort_" + language + " VALUES (" + wordID + ", " + replacementID + ");");
             }
             // else: don't do anything, somebody is trying to be very funny here
         } catch (SQLException e) {
