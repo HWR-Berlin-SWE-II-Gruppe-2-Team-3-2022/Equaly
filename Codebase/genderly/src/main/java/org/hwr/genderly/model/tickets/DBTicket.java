@@ -1,6 +1,7 @@
 package org.hwr.genderly.model.tickets;
 
 public class DBTicket {
+    private String sprache = "";
     private String wort = "";
     private String fall = "";
     private String gender = "";
@@ -59,5 +60,13 @@ public class DBTicket {
     public boolean isNotEmpty() {
         return !(wort.isEmpty() || fall.isEmpty() || gender.isEmpty() || numerus.isEmpty() ||
                 ersatzWort.isEmpty() || ersatzGender.isEmpty());
+    }
+
+    public String getSprache() {
+        return sprache;
+    }
+
+    public void setSprache(String sprache) {
+        this.sprache = sprache;
     }
 }
