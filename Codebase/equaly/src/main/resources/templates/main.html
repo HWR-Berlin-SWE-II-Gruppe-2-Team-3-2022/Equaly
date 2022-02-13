@@ -11,27 +11,27 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
     <link th:href="@{/css/bootstrap-multiselect.css}" rel="stylesheet" />
 
-    <script type="text/javascript" th:src="@{/js/src/genderly.js}"></script>
+    <script type="text/javascript" th:src="@{/js/src/equaly.js}"></script>
     <script type="text/javascript" th:src="@{/js/src/bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/src/bootstrap-multiselect.min.js}"></script>
 </head>
 <body class="d-flex flex-column min-vh-100" style="background-color: rgba(236,236,236,255); height: 100%">
     <!-- Thymeleaf replaces this during runtime: -->
-    <div th:replace="fragments/genderlyNavbar :: genderlyNavbar"></div>
+    <div th:replace="fragments/equalyNavbar :: equalyNavbar"></div>
     <div class="container-fluid" style="margin-top: auto;">
         <!-- Don't yet fulfill functional -->
         <div class="row justify-content-center">
             <div class="col-4">
-                <label for="sel2" style="color: #e6301b; float: left;" ><b>Sprache:</b></label>
+                <!-- <label for="sel2" style="color: #e6301b; float: left;" ><b>Sprache:</b></label>
                 <select class="form-control" id="sel2" style="color: black; margin-bottom: 20px; background-color:rgba(250,250,250,0.7) !important;">
                     <option value="0">Deutsch</option>
-                </select>
+                </select> -->
             </div>
             <div class="col-4">
-                <label for="sel3" style="color: #e6301b; float: left; width: 100%"><b>Gendering-Stil:</b></label>
+                <!-- <label for="sel3" style="color: #e6301b; float: left; width: 100%"><b>Gendering-Stil:</b></label>
                 <select class="form-control" id="sel3" style="color: black; margin-bottom: 20px; background-color:rgba(250,250,250,0.7) !important;">
                     <option value="0">Wortersatz</option>
-                </select>
+                </select> -->
             </div>
         </div>
         <!-- Contains both text areas and functional user form to 'submit' text to be analyzed -->
@@ -50,6 +50,6 @@
         </div>
     </div>
     <!-- Thymeleaf replaces this during runtime: -->
-    <div th:replace="fragments/genderlyFooter :: genderlyFooter"></div>
+    <div th:replace="fragments/equalyFooter :: equalyFooter"></div>
 </body>
 </html>

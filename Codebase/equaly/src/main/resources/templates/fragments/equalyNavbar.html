@@ -5,10 +5,10 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
 </head>
 <body>
-    <div th:fragment="genderlyNavbar" style="vertical-align: middle">
+    <div th:fragment="equalyNavbar" style="vertical-align: middle">
         <div id="navbar-container">
-            <nav class="navbar navbar-dark bg-dark" style="background-color: rgba(230,48,27,0.8) !important">
-                <a class="navbar-brand" href="/"><img style="margin-bottom: 5px" width="25px" height="auto" th:src="@{/img/logo.png}" alt="Genderly Logo"> <span th:text="${appName}"></span></a>
+            <nav class="navbar navbar-dark bg-dark" style="background-image: linear-gradient(to right, rgba(255, 58, 33, 1) , rgba(255, 189, 89, 1)); !important">
+                <a class="navbar-brand" href="/"><img style="margin-bottom: 5px" width="25px" height="auto" th:src="@{/img/logo.png}" alt="Equaly Logo"> <span th:text="${appName}"></span></a>
                 <div style="float: right">
                     <button type="button" class="btn btn-outline-light" onclick="loadGitHub()">GitHub-Projekt</button>
                 </div>

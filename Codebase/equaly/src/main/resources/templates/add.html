@@ -7,14 +7,14 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
     <link th:href="@{/css/bootstrap-multiselect.css}" rel="stylesheet" />
 
-    <script type="text/javascript" th:src="@{/js/src/genderly.js}"></script>
+    <script type="text/javascript" th:src="@{/js/src/equaly.js}"></script>
     <script type="text/javascript" th:src="@{/js/src/bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/src/bootstrap-multiselect.min.js}"></script>
 
 </head>
 <body style="background-color: rgba(236,236,236,255); height: 100%">
 <!-- Thymeleaf replaces this during runtime: -->
-<div th:replace="fragments/genderlyNavbar :: genderlyNavbar"></div>
+<div th:replace="fragments/equalyNavbar :: equalyNavbar"></div>
 <div id="main-view-container" class="container" style="margin-top: 5%">
     <form id="main-form" action="#" th:action="@{/add}" th:object="${dbTicket}" method="post">
         <label for="sel1" style="color: darkgray; float: left;">Sprache:</label>
