@@ -15,7 +15,7 @@ It takes in syntactically correct, german or english text. Based on that it gene
 ## How To Run It
 
 1. Download the most recent release from the releases page.
-2. Run the included `.jar` file from your command line like so: `java -jar genderly.jar`
+2. Run the included `.jar` file from your command line like so: `java -jar equaly.jar`
 3. Open your favourite browser and navigate to here: `http://localhost:8081/`
     You should see something like this:
     
