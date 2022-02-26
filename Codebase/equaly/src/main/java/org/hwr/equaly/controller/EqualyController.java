@@ -10,6 +10,7 @@ import org.hwr.equaly.model.dbHandler.DBHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ public class EqualyController {
     private TranslateTicket translateTicket = new TranslateTicket();
     private DBHandler db;
     private String outputText = "";
+    private String language;
 
     // Injecting configured application's name into variable
     @Value("${spring.application.name}")
@@ -55,6 +57,7 @@ public class EqualyController {
      */
     @Autowired
     public EqualyController(DBHandler db) {
+        language = LocaleContextHolder.getLocale().getLanguage();
         db.initialize();
         this.db = db;
     }
@@ -69,7 +72,12 @@ public class EqualyController {
         model.addAttribute(thyme.TRANSLATE, translateTicket);
         model.addAttribute(thyme.APPNAME, appName);
         model.addAttribute(thyme.OUTPUT, outputText);
-        return "main";
+
+        if (language.equals("de")) {
+            return "main_de";
+        }
+
+        return "main_en";
     }
 
     /**
@@ -104,8 +112,8 @@ public class EqualyController {
         // replaces placeholder appName in html with content of appName
         model.addAttribute(thyme.APPNAME, appName);
 
-        ArrayList<String> genderList = new ArrayList<String>(Arrays.asList("m", "f", "n"));
-        ArrayList<String> fallList = new ArrayList<String>(Arrays.asList("Nominativ", "Genitiv", "Dativ", "Akkusativ"));
+        ArrayList<String> genderList = new ArrayList<>(Arrays.asList("m", "f", "n"));
+        ArrayList<String> fallList = new ArrayList<>(Arrays.asList("Nominativ", "Genitiv", "Dativ", "Akkusativ"));
 
         model.addAttribute("genderList", genderList);
         model.addAttribute("fallList", fallList);
