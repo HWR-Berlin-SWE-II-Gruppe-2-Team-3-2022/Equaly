@@ -3,6 +3,7 @@ package org.hwr.equaly.controller;
 import com.github.pemistahl.lingua.api.Language;
 import org.hwr.equaly.controller.exchanger.WordExchanger;
 import org.hwr.equaly.controller.languageTagger.LanguageTagger;
+import org.hwr.equaly.controller.posTagger.POSTagger;
 import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
 import org.hwr.equaly.controller.tokenizer.Tokenizer;
@@ -47,6 +48,7 @@ public class EqualyController {
     private DBHandler db;
     private LanguageTagger languageTagger;
     private Tokenizer tokenizer;
+    private POSTagger posTagger;
     private String outputText = "";
     private String language;
 
@@ -62,12 +64,14 @@ public class EqualyController {
      * @param db the DBHandler that 'is handed in from nowhere' (it's autowired)
      */
     @Autowired
-    public EqualyController(DBHandler db, LanguageTagger languageTagger, Tokenizer tokenizer) {
+    public EqualyController(DBHandler db, LanguageTagger languageTagger, Tokenizer tokenizer, POSTagger posTagger) {
         languageTagger.initialize();
         tokenizer.initialize();
+        posTagger.initialize();
         db.initialize();
         this.languageTagger = languageTagger;
         this.tokenizer = tokenizer;
+        this.posTagger = posTagger;
         this.db = db;
     }
 
@@ -108,6 +112,7 @@ public class EqualyController {
             Language language = languageTagger.getLanguage(translateTicket.getInputText());
             // split up text into individual word/content fragments
             String[] tokens = tokenizer.run(language, translateTicket.getInputText());
+            String[] tags = posTagger.run(language, tokens);
         }
 
         /*
