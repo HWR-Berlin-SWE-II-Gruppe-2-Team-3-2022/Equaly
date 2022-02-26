@@ -1,6 +1,8 @@
 package org.hwr.equaly.controller;
 
+import com.github.pemistahl.lingua.api.Language;
 import org.hwr.equaly.controller.exchanger.WordExchanger;
+import org.hwr.equaly.controller.languageDetector.LanguageDetector;
 import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
 import org.hwr.equaly.model.tickets.DBTicket;
@@ -38,6 +40,8 @@ public class EqualyController {
     private WordExchanger wordExchanger;
     @Autowired
     private TextMerger textMerger;
+    @Autowired
+    private LanguageDetector languageDetector;
 
     private TranslateTicket translateTicket = new TranslateTicket();
     private DBHandler db;
@@ -57,7 +61,6 @@ public class EqualyController {
      */
     @Autowired
     public EqualyController(DBHandler db) {
-        language = LocaleContextHolder.getLocale().getLanguage();
         db.initialize();
         this.db = db;
     }
@@ -72,6 +75,7 @@ public class EqualyController {
         model.addAttribute(thyme.TRANSLATE, translateTicket);
         model.addAttribute(thyme.APPNAME, appName);
         model.addAttribute(thyme.OUTPUT, outputText);
+        language = LocaleContextHolder.getLocale().getLanguage();
 
         if (language.equals("de")) {
             return "main_de";
@@ -90,7 +94,14 @@ public class EqualyController {
     public String translate(@ModelAttribute TranslateTicket translateTicket, Model model) {
         // Makes the last entered input Text stay beyond reload
         this.translateTicket = translateTicket;
+        this.translateTicket.setInputText(this.translateTicket.getInputText().trim());
+
         // executing only if there really is any text
+        if (!translateTicket.getInputText().isEmpty()) {
+            // detect text's language (de/en only for now)
+            Language language = languageDetector.getLanguage(translateTicket.getInputText());
+        }
+
         if (!translateTicket.getInputText().trim().isEmpty()) {
             // split up text into individual word fragments
             String[][] splitText = textSplitter.createSubsets(translateTicket.getInputText());
@@ -104,6 +115,7 @@ public class EqualyController {
             // combine text fragements of last analysis step to form a sentence again
             outputText = textMerger.merge(processedArticles).trim();
         }
+
         return "redirect:/";
     }
 
