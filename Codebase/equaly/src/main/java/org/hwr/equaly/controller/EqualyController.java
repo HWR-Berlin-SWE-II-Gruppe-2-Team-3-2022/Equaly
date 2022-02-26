@@ -2,7 +2,7 @@ package org.hwr.equaly.controller;
 
 import com.github.pemistahl.lingua.api.Language;
 import org.hwr.equaly.controller.exchanger.WordExchanger;
-import org.hwr.equaly.controller.languageDetector.LanguageDetector;
+import org.hwr.equaly.controller.languageTagger.LanguageTagger;
 import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
 import org.hwr.equaly.model.tickets.DBTicket;
@@ -41,7 +41,7 @@ public class EqualyController {
     @Autowired
     private TextMerger textMerger;
     @Autowired
-    private LanguageDetector languageDetector;
+    private LanguageTagger languageTagger;
 
     private TranslateTicket translateTicket = new TranslateTicket();
     private DBHandler db;
@@ -99,7 +99,7 @@ public class EqualyController {
         // executing only if there really is any text
         if (!translateTicket.getInputText().isEmpty()) {
             // detect text's language (de/en only for now)
-            Language language = languageDetector.getLanguage(translateTicket.getInputText());
+            Language language = languageTagger.getLanguage(translateTicket.getInputText());
         }
 
         if (!translateTicket.getInputText().trim().isEmpty()) {
