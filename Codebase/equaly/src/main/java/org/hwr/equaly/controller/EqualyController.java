@@ -5,6 +5,8 @@ import org.hwr.equaly.controller.exchanger.WordExchanger;
 import org.hwr.equaly.controller.languageTagger.LanguageTagger;
 import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
+import org.hwr.equaly.controller.tokenizer.Tokenizer;
+import org.hwr.equaly.controller.tokenizer.TokenizerImpl;
 import org.hwr.equaly.model.tickets.DBTicket;
 import org.hwr.equaly.model.tickets.TranslateTicket;
 import org.hwr.equaly.model.AnalysisContainer;
@@ -40,11 +42,11 @@ public class EqualyController {
     private WordExchanger wordExchanger;
     @Autowired
     private TextMerger textMerger;
-    @Autowired
-    private LanguageTagger languageTagger;
 
     private TranslateTicket translateTicket = new TranslateTicket();
     private DBHandler db;
+    private LanguageTagger languageTagger;
+    private Tokenizer tokenizer;
     private String outputText = "";
     private String language;
 
@@ -60,8 +62,12 @@ public class EqualyController {
      * @param db the DBHandler that 'is handed in from nowhere' (it's autowired)
      */
     @Autowired
-    public EqualyController(DBHandler db) {
+    public EqualyController(DBHandler db, LanguageTagger languageTagger, Tokenizer tokenizer) {
+        languageTagger.initialize();
+        tokenizer.initialize();
         db.initialize();
+        this.languageTagger = languageTagger;
+        this.tokenizer = tokenizer;
         this.db = db;
     }
 
@@ -100,8 +106,11 @@ public class EqualyController {
         if (!translateTicket.getInputText().isEmpty()) {
             // detect text's language (de/en only for now)
             Language language = languageTagger.getLanguage(translateTicket.getInputText());
+            // split up text into individual word/content fragments
+            String[] tokens = tokenizer.run(language, translateTicket.getInputText());
         }
 
+        /*
         if (!translateTicket.getInputText().trim().isEmpty()) {
             // split up text into individual word fragments
             String[][] splitText = textSplitter.createSubsets(translateTicket.getInputText());
@@ -115,6 +124,7 @@ public class EqualyController {
             // combine text fragements of last analysis step to form a sentence again
             outputText = textMerger.merge(processedArticles).trim();
         }
+        */
 
         return "redirect:/";
     }
