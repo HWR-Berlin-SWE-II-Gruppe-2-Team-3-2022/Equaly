@@ -13,31 +13,29 @@ import java.io.InputStream;
 @Component
 public class TokenizerImpl implements Tokenizer {
 
-    InputStream model_de, model_en;
+    InputStream modelStreamDE, modelStreamEN;
+    TokenizerModel model_de, model_en;
 
     public void initialize() {
         try {
-            model_de = new FileInputStream("./data/models/de-tokenizer.bin");
-            model_en = new FileInputStream("./data/models/en-tokenizer.bin");
-        } catch (FileNotFoundException f) {
+            modelStreamDE = new FileInputStream("./data/models/de-tokenizer.bin");
+            modelStreamEN = new FileInputStream("./data/models/en-tokenizer.bin");
+            model_de = new TokenizerModel(modelStreamDE);
+            model_en = new TokenizerModel(modelStreamEN);
+        } catch (IOException f) {
             f.printStackTrace();
         }
     }
 
     public String[] run(Language language, String text) {
-        try {
-            TokenizerModel model;
-            if (language.equals(Language.GERMAN)) {
-                model = new TokenizerModel(model_de);
-            } else {
-                model = new TokenizerModel(model_en);
-            }
-            TokenizerME tokenizer = new TokenizerME(model);
-            return tokenizer.tokenize(text);
-        } catch (IOException io) {
-            io.printStackTrace();
+        TokenizerModel model;
+        if (language.equals(Language.GERMAN)) {
+            model = model_de;
+        } else {
+            model = model_en;
         }
-        return new String[0];
+        TokenizerME tokenizer = new TokenizerME(model);
+        return tokenizer.tokenize(text);
     }
 
 }
