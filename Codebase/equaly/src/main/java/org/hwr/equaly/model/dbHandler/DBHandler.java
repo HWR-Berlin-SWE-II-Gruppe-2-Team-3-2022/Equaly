@@ -1,6 +1,7 @@
 package org.hwr.equaly.model.dbHandler;
 
-import org.hwr.equaly.model.Word;
+import com.github.pemistahl.lingua.api.Language;
+import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.tickets.DBTicket;
 
 public interface DBHandler {
@@ -16,7 +17,7 @@ public interface DBHandler {
      * @param substantive the substantive for which a replacement is to be found
      * @return the replacement or an empty string of no replacement could be found
      */
-    Word getSubstantiveFor(String substantive);
+    Substitute getSubstantiveFor(String substantive, Language language);
 
     /**
      * Add a Substantive with case and gender aswell as (maybe) a replacement for this word.

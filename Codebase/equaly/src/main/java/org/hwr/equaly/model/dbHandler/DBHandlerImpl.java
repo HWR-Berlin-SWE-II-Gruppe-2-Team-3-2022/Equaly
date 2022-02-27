@@ -1,6 +1,7 @@
 package org.hwr.equaly.model.dbHandler;
 
-import org.hwr.equaly.model.Word;
+import com.github.pemistahl.lingua.api.Language;
+import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.tickets.DBTicket;
 import org.springframework.stereotype.Component;
 
@@ -103,11 +104,12 @@ public class DBHandlerImpl implements DBHandler {
     }
 
     @Override
-    public Word getSubstantiveFor(String substantive) {
-        Word replacement = new Word();
+    public Substitute getSubstantiveFor(String substantive, Language language) {
+        Substitute replacement = new Substitute();
+        String lang = getLanguageCode(language);
         try {
             ResultSet rs = conn.createStatement().executeQuery(
-                    "SELECT Wort, Fall, Gender, Numerus FROM Wort_DE AS W INNER JOIN Wort_ersetzt_Wort_DE AS WW ON W.Wort_ID = WW.Ersatzwort_ID WHERE WW.Wort_ID = (SELECT Wort_ID FROM Wort_DE WHERE Wort = '" + substantive + "') LIMIT 1;");
+                    "SELECT Wort, Fall, Gender, Numerus FROM Wort_" + lang + " AS W INNER JOIN Wort_ersetzt_Wort_" + lang + " AS WW ON W.Wort_ID = WW.Ersatzwort_ID WHERE WW.Wort_ID = (SELECT Wort_ID FROM Wort_" + lang + " WHERE Wort = '" + substantive + "') LIMIT 1;");
             rs.next();
             replacement.setWord(rs.getString(1));
             replacement.setFall(rs.getString(2));
@@ -117,7 +119,28 @@ public class DBHandlerImpl implements DBHandler {
             // Fine, we'll just throw the empty Substantive object then
             return replacement;
         }
+
+        // Replacement hasn't been thrown, so something useful was found -> enrich it
+        try {
+            ResultSet rs = conn.createStatement().executeQuery(
+                    "SELECT Fall, Gender, Numerus FROM Wort_" + lang + " WHERE Wort = '" + substantive + "' LIMIT 1;");
+            rs.next();
+            replacement.setOldFall(rs.getString(1));
+            replacement.setOldGender(rs.getString(2));
+            replacement.setOldNumerus(rs.getString(3));
+        } catch (SQLException e) {
+            // Fine, we'll just throw with empty Substantive history then
+            return replacement;
+        }
+
         return replacement;
+    }
+
+    private String getLanguageCode(Language language) {
+        if (language.equals(Language.GERMAN)) {
+            return "DE";
+        }
+        return "EN";
     }
 
     /**

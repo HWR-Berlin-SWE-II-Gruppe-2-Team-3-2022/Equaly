@@ -1,43 +1,31 @@
 package org.hwr.equaly.controller.exchanger;
 
+import com.github.pemistahl.lingua.api.Language;
 import org.hwr.equaly.model.AnalysisContainer;
-import org.hwr.equaly.model.Word;
-import org.hwr.equaly.model.WordAttributes;
+import org.hwr.equaly.model.Fragment;
+import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.dbHandler.DBHandler;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WordExchangerImpl implements WordExchanger {
 
-    // extracted for easy access later on
-    private final int CONTEXTSIZE = 3;
-
     @Override
-    public AnalysisContainer exchangeSubstantives(DBHandler db, String[][] subSets) {
+    public AnalysisContainer exchangeSubstantives(DBHandler db, Language language, Fragment[][] subSets) {
         // transform subSets to extended subSets objects for marking of substantive indices
         AnalysisContainer container = new AnalysisContainer(subSets);
-        // iterate over all entries of Array's first dimension [e.g. 0 -> [[word], [word], [word]])
+        // Pro Satz, Pro Wort:
         for (int i = 0; i < subSets.length; i++) {
-            // check if the current entry conforms with a size of 3 for second dimension arrays
-            // if not -> skip, something is wrong with it
-            if (subSets[i].length == CONTEXTSIZE) {
-                // if so -> focus only on central String entry (center word) of second dimension array from here
-                // check if this String starts with capital letter -> substantive
-                String centerWord = subSets[i][CONTEXTSIZE / 2];
-                if (!centerWord.isEmpty()) {
-                    if (Character.isUpperCase(centerWord.charAt(0))) {
-                        // @ this point Strings like "Wort," or "Wort!" are possible
-                        // we make a copy of this entry reduced to everything alphabetical only
-                        String alphabetized = alphabetize(centerWord);
-                        // Head out to find a replacement for the current substantive
-                        // Substantive object carries either replacement or "" if none could be found
-                        Word replacement = db.getSubstantiveFor(alphabetized);
-                        // Only if a replacement took place to be put effort into ... actually replacing the word
-                        if (!replacement.getWord().isEmpty()) {
-                            // we are currently building an AnalysisContainer, so we just hand over all info
-                            // regarding our current replacement request to it and make it ... do stuff with it.
-                            container.addSubstantiveReplacement(centerWord.replace(alphabetized, replacement.getWord()), i, new WordAttributes(replacement.getGender(), replacement.getFall(), replacement.getNumerus()));
-                        }
+            for (int j = 0; j < subSets[i].length; j++) {
+                // Wenn das aktuelle Wort mit dem Tag "NN" versehen wurde:
+                if (subSets[i][j].tag.equals("NN")) {
+                    // Suche ein Ersatzwort (das oder "" kommt als Rückgabe) in der DB
+                    // Vermerke hier auch den alten Modus für spätere Artikelanalyse
+                    Substitute substitute = db.getSubstantiveFor(subSets[i][j].token, language);
+                    // Wenn Ersatzwort nicht leer:
+                    if (!substitute.getWord().isEmpty()) {
+                        // Füge Ersatzwort dem AnalysisContainer mit allen Metadaten an
+                        container.addSubstantiveReplacement(substitute, i, j, subSets[i][j].index);
                     }
                 }
             }

@@ -7,8 +7,8 @@ import org.hwr.equaly.controller.posTagger.POSTagger;
 import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
 import org.hwr.equaly.controller.tokenizer.Tokenizer;
-import org.hwr.equaly.controller.tokenizer.TokenizerImpl;
 import org.hwr.equaly.model.Fragment;
+import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.tickets.DBTicket;
 import org.hwr.equaly.model.tickets.TranslateTicket;
 import org.hwr.equaly.model.AnalysisContainer;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Controller containing the logic used to interact with user through web frontend.
@@ -115,11 +116,24 @@ public class EqualyController {
             String[] tokens = tokenizer.run(language, translateTicket.getInputText());
             // gather information on individual fragments
             String[] tags = posTagger.run(language, tokens);
-            // group tokens in sentences
+            // group tokens into sentences
             Fragment[][] splitText = textSplitter.createSubsets(tokens, tags);
 
-            for (int i = 0; i < splitText[0].length; i++) {
-                System.out.print(splitText[0][i].token + " ");
+            // run substantive replacement, replace them and make notes of replacements
+            AnalysisContainer processedSubstantives = wordExchanger.exchangeSubstantives(db, language, splitText);
+
+            // Nur zur Verifikation des aktuellen Arbeitsstandes!
+            // TODO: Mit nächstem Turn entfernen
+            HashMap<Integer, Substitute> x = processedSubstantives.getSubstantiveReplacements();
+            for (int key: x.keySet()) {
+                System.out.println(x.get(key).getWord());
+                System.out.println(x.get(key).getFall());
+                System.out.println(x.get(key).getGender());
+                System.out.println(x.get(key).getNumerus());
+                System.out.println(" ");
+                System.out.println(x.get(key).getOldFall());
+                System.out.println(x.get(key).getOldGender());
+                System.out.println(x.get(key).getOldNumerus());
             }
 
         }

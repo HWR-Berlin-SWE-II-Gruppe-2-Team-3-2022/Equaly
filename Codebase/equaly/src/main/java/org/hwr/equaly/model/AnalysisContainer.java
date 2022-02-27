@@ -5,49 +5,44 @@ import java.util.HashMap;
 
 public class AnalysisContainer {
 
-    private String[][] subSets;
-    private HashMap<Integer, WordAttributes> substantiveReplacements;
+    private Fragment[][] subSets;
+    private HashMap<Integer, Substitute> substantiveReplacements;
     private ArrayList<Integer> articleIndices;
-    private final int CONTEXTSIZE = 3;
 
-    public AnalysisContainer(String[][] subSets) {
+    public AnalysisContainer(Fragment[][] subSets) {
         this.subSets = subSets;
-        substantiveReplacements = new HashMap<Integer, WordAttributes>();
-        articleIndices = new ArrayList<Integer>();
+        substantiveReplacements = new HashMap<>();
+        articleIndices = new ArrayList<>();
     }
 
-    public String[][] getSubSets() {
+    public Fragment[][] getSubSets() {
         return subSets;
     }
-
-    public HashMap<Integer, WordAttributes> getSubstantiveReplacements() {
+    public HashMap<Integer, Substitute> getSubstantiveReplacements() {
         return substantiveReplacements;
     }
-
     public ArrayList<Integer> getArticleIndices() {
         return articleIndices;
     }
 
     /**
      * Add information on a replacing substantive to the Container's dedicated list.
-     * @param word this is the new word to be added to the 2D text structure
-     * @param index this is the first dimension coordinate at which the text will be added in the center
-     * @param wordAttributes the attributes of the new, replacing word
+     * TODO: Update JavaDoc
      */
-    public void addSubstantiveReplacement(String word, int index, WordAttributes wordAttributes) {
-        subSets[index][CONTEXTSIZE / 2] = word;
-        substantiveReplacements.put(index, wordAttributes);
+    public void addSubstantiveReplacement(Substitute substitute, int index_sentence, int index_word, int index_global) {
+        subSets[index_sentence][index_word] = new Fragment(substitute.getWord(), "NN", index_global);
+        substantiveReplacements.put(index_global, substitute);
     }
 
     public void addArticleReplacement(String article, int index) {
-        subSets[index][CONTEXTSIZE / 2] = article;
-        articleIndices.add(index);
+        //subSets[index][CONTEXTSIZE / 2] = article;
+        //articleIndices.add(index);
     }
 
     public String[] getSubSet(int index) {
-        if (index >= 0 && index < subSets.length) {
-            return subSets[index];
-        }
+        //if (index >= 0 && index < subSets.length) {
+            //return subSets[index];
+        //}
         return null;
     }
 }

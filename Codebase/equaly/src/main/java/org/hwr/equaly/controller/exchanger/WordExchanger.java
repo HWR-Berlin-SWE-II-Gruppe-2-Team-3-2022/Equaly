@@ -1,6 +1,8 @@
 package org.hwr.equaly.controller.exchanger;
 
+import com.github.pemistahl.lingua.api.Language;
 import org.hwr.equaly.model.AnalysisContainer;
+import org.hwr.equaly.model.Fragment;
 import org.hwr.equaly.model.dbHandler.DBHandler;
 
 public interface WordExchanger {
@@ -11,7 +13,7 @@ public interface WordExchanger {
      * @param subSets The 2D split up and spread out input text
      * @return a container for the 2D text, now also carrying notes on which word was replaced how and where
      */
-    AnalysisContainer exchangeSubstantives(DBHandler db, String[][] subSets);
+    AnalysisContainer exchangeSubstantives(DBHandler db, Language language, Fragment[][] subSets);
 
     /**
      *
