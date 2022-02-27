@@ -12,12 +12,17 @@ public class TextMergerImpl implements TextMerger {
         Fragment[][] subSets = analysisContainer.getSubSets();
         StringBuilder result = new StringBuilder();
 
-        for (Fragment[] sentence: subSets) {
-            for (Fragment word: sentence) {
-                result.append(" ").append(word.token);
+        for (Fragment[] subSet : subSets) {
+            for (int j = 0; j < subSet.length; j++) {
+                if (j == 0) {
+                    result.append(subSet[j].token.substring(0, 1).toUpperCase()).append(subSet[j].token.substring(1));
+                } else if (j == subSet.length - 1 && ".!?;:".contains(subSet[j].token)) {
+                    result.append(subSet[j].token).append(" ");
+                } else {
+                    result.append(" ").append(subSet[j].token);
+                }
             }
         }
-
         return result.toString();
     }
 }
