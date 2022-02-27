@@ -6,23 +6,24 @@ import opennlp.tools.postag.POSTaggerME;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 @Component
 public class POSTaggerImpl implements POSTagger {
 
-    InputStream posModel_de, posModel_en;
+    InputStream posModelStreamDE, posModelStreamEN;
+    POSModel posModel_de, posModel_en;
 
     @Override
     public void initialize() {
         // loading the parts-of-speech model from stream
         try {
-            this.posModel_de = new FileInputStream("./data/models/de-pos-maxent.bin");
-            this.posModel_en = new FileInputStream("./data/models/en-pos-maxent.bin");
-        } catch (
-        FileNotFoundException f) {
+            this.posModelStreamDE = new FileInputStream("./data/models/de-pos-maxent.bin");
+            this.posModelStreamEN = new FileInputStream("./data/models/en-pos-maxent.bin");
+            posModel_de = new POSModel(posModelStreamDE);
+            posModel_en = new POSModel(posModelStreamEN);
+        } catch (IOException f) {
             f.printStackTrace();
         }
     }
@@ -31,20 +32,14 @@ public class POSTaggerImpl implements POSTagger {
     public String[] run(Language language, String[] tokens) {
         // Parts-Of-Speech Tagging
         POSModel posModel;
-        try {
-            if (language.equals(Language.GERMAN)) {
-                posModel = new POSModel(posModel_de);
-            } else {
-                posModel = new POSModel(posModel_en);
-            }
-            // initializing the parts-of-speech tagger with model
-            POSTaggerME posTagger = new POSTaggerME(posModel);
-            // Tagger tagging the tokens
-            return posTagger.tag(tokens);
-        } catch(IOException io) {
-            io.printStackTrace();
+        if (language.equals(Language.GERMAN)) {
+            posModel = posModel_de;
+        } else {
+            posModel = posModel_en;
         }
-
-        return new String[0];
+        // initializing the parts-of-speech tagger with model
+        POSTaggerME posTagger = new POSTaggerME(posModel);
+        // Tagger tagging the tokens
+        return posTagger.tag(tokens);
     }
 }
