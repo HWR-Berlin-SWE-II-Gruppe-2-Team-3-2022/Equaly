@@ -254,7 +254,7 @@ public class DBHandlerImpl implements DBHandler {
     }
 
     @Override
-    public String getArticleFor(String articleFamily, Language language, String fall, String gender, String numerus) {
+    public String getArticleFor(String articleFamily, String token, Language language, String fall, String gender, String numerus) {
         String lang = getLanguageCode(language);
         try {
             ResultSet rs = conn.createStatement().executeQuery(

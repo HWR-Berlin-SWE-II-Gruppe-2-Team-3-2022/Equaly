@@ -41,5 +41,5 @@ public interface DBHandler {
      * @param numerus (singular, plural)
      * @return the article that fits the search description or null if this could not be satisfied.
      */
-    String getArticleFor(String articleFamily, Language language, String fall, String gender, String numerus);
+    String getArticleFor(String articleFamily, String token, Language language, String fall, String gender, String numerus);
 }

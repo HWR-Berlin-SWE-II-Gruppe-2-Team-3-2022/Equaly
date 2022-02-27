@@ -57,17 +57,18 @@ public class WordExchangerImpl implements WordExchanger {
             // Iteriere über den Satz, suche dabei alle ART, PRELS im Satz
             for (Fragment word: sentence) {
                 // Wenn aktuelles Wort ART/PRELS ist, ist es möglicherweise zu substituieren
-                if (word.tag.equals("ART") || word.tag.equals("PRELS")) {
+                if (word.tag.equals("ART") || word.tag.equals("PRELS") || word.tag.equals("PDAT")) {
                     // erfahre Lemma und Kasus, Numerus, Genus des aktuellen Artikels
                     Article lemma = db.getArticleFamily(word.token, language);
                     // Wenn dieses Wort nun in Relation zum Modus des substituierten Wortes steht:
-                    if (lemma.getGender().equals(replacements.get(key).getOldGender())
-                        || word.index == replacements.get(key).getGlobalIndex() - 1) {
+                    if (lemma != null && lemma.getGender().equals(replacements.get(key).getOldGender())) {
                         // Suche nach einer Substitution mit identischer Familie und Substitutions-Modus
-                        String substitute = db.getArticleFor(lemma.getLemma(), language, replacements.get(key).getFall(), replacements.get(key).getGender(), replacements.get(key).getNumerus());
+                        String substitute = db.getArticleFor(lemma.getLemma(), word.token, language, replacements.get(key).getFall(), replacements.get(key).getGender(), replacements.get(key).getNumerus());
                         // Prüfe, ob die Suche erfolgreich war:
                         if (substitute != null) {
-                            container.addArticleReplacement(substitute, word.tag, replacements.get(key).getSentenceIndex(), word.wordIndex, word.index);
+                            if (!(word.wordIndex < sentence.length - 1 && sentence[word.wordIndex + 1].tag.equals("NN")) || word.index == replacements.get(key).getGlobalIndex() - 1) {
+                                container.addArticleReplacement(substitute, word.tag, replacements.get(key).getSentenceIndex(), word.wordIndex, word.index);
+                            }
                         }
                     }
                 }

@@ -15,11 +15,12 @@ public class TextMergerImpl implements TextMerger {
         for (Fragment[] subSet : subSets) {
             for (int j = 0; j < subSet.length; j++) {
                 if (j == 0) {
-                    result.append(subSet[j].token.substring(0, 1).toUpperCase()).append(subSet[j].token.substring(1));
-                } else if (j == subSet.length - 1 && ".!?;:".contains(subSet[j].token)) {
-                    result.append(subSet[j].token).append(" ");
+                    result.append(subSet[j].token.substring(0, 1).toUpperCase()).append(subSet[j].token.substring(1)).append(" ");
                 } else {
-                    result.append(" ").append(subSet[j].token);
+                    if (",;.?!".contains(subSet[j].token)) {
+                        result.deleteCharAt(result.length()-1);
+                    }
+                    result.append(subSet[j].token).append(" ");
                 }
             }
         }
