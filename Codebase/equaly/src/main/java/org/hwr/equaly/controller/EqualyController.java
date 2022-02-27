@@ -8,6 +8,7 @@ import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
 import org.hwr.equaly.controller.tokenizer.Tokenizer;
 import org.hwr.equaly.controller.tokenizer.TokenizerImpl;
+import org.hwr.equaly.model.Fragment;
 import org.hwr.equaly.model.tickets.DBTicket;
 import org.hwr.equaly.model.tickets.TranslateTicket;
 import org.hwr.equaly.model.AnalysisContainer;
@@ -112,7 +113,15 @@ public class EqualyController {
             Language language = languageTagger.getLanguage(translateTicket.getInputText());
             // split up text into individual word/content fragments
             String[] tokens = tokenizer.run(language, translateTicket.getInputText());
+            // gather information on individual fragments
             String[] tags = posTagger.run(language, tokens);
+            // group tokens in sentences
+            Fragment[][] splitText = textSplitter.createSubsets(tokens, tags);
+
+            for (int i = 0; i < splitText[0].length; i++) {
+                System.out.print(splitText[0][i].token + " ");
+            }
+
         }
 
         /*
