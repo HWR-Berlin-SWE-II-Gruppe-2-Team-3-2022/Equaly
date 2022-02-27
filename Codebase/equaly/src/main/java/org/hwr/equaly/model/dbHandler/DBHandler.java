@@ -1,6 +1,7 @@
 package org.hwr.equaly.model.dbHandler;
 
 import com.github.pemistahl.lingua.api.Language;
+import org.hwr.equaly.model.Article;
 import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.tickets.DBTicket;
 
@@ -27,10 +28,10 @@ public interface DBHandler {
 
     /**
      * Find the current article's family - that is, if the current word is an article.
-     * @param predecessorAlphabetized - an alphabetic only word
+     * TODO: JavaDoc Update
      * @return null if nothing was found, the word family identifying string otherwise
      */
-    String getArticleFamily(String predecessorAlphabetized);
+    Article getArticleFamily(String token, Language language);
 
     /**
      * Given an article family, find an article for the given casus, numerus, genus
@@ -40,5 +41,5 @@ public interface DBHandler {
      * @param numerus (singular, plural)
      * @return the article that fits the search description or null if this could not be satisfied.
      */
-    String getArticleFor(String articleFamily, String fall, String gender, String numerus);
+    String getArticleFor(String articleFamily, Language language, String fall, String gender, String numerus);
 }

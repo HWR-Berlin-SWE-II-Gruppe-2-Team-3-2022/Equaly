@@ -12,11 +12,14 @@ public class TextSplitterImpl implements TextSplitter {
         ArrayList<Fragment[]> sentences = new ArrayList<>();
         ArrayList<Fragment> sentence = new ArrayList<>();
 
+        int wordIndex = 0;
         for (int i = 0; i < tokens.length; i++) {
-            sentence.add(new Fragment(tokens[i], tags[i], i));
+            sentence.add(new Fragment(tokens[i], tags[i], i, wordIndex));
+            wordIndex++;
             if (endOfSentence(tokens[i])) {
                 sentences.add(sentence.toArray(new Fragment[0]));
                 sentence = new ArrayList<>();
+                wordIndex = 0;
             }
         }
 

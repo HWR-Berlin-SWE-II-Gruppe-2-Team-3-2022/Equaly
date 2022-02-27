@@ -2,10 +2,13 @@ package org.hwr.equaly.controller.exchanger;
 
 import com.github.pemistahl.lingua.api.Language;
 import org.hwr.equaly.model.AnalysisContainer;
+import org.hwr.equaly.model.Article;
 import org.hwr.equaly.model.Fragment;
 import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.dbHandler.DBHandler;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
 
 @Component
 public class WordExchangerImpl implements WordExchanger {
@@ -24,12 +27,14 @@ public class WordExchangerImpl implements WordExchanger {
                     Substitute substitute = db.getSubstantiveFor(subSets[i][j].token, language);
                     // Wenn Ersatzwort nicht leer:
                     if (!substitute.getWord().isEmpty()) {
+                        substitute.setSentenceIndex(i);
                         // Füge Ersatzwort dem AnalysisContainer mit allen Metadaten an
                         container.addSubstantiveReplacement(substitute, i, j, subSets[i][j].index);
                     }
                 }
             }
         }
+
         return container;
     }
 
@@ -43,35 +48,31 @@ public class WordExchangerImpl implements WordExchanger {
     }
 
     @Override
-    public AnalysisContainer exchangeArticles(DBHandler db, AnalysisContainer analysisContainer) {
-        String predecessor;
-        // iterate over all entries of analysisContainer's substantiveReplacements
-        for (int key: analysisContainer.getSubstantiveReplacements().keySet()) {
-            // Get the subSet's prior and tailing entry for the replacement
-            predecessor = analysisContainer.getSubSet(key)[0];
-            // If the word before or after the center one is empty -> skip this word, just do the other or none.
-            if (predecessor == null || predecessor.isEmpty()) {
-                continue;
+    public AnalysisContainer exchangeArticles(DBHandler db, Language language, AnalysisContainer container) {
+        HashMap<Integer, Substitute> replacements = container.getSubstantiveReplacements();
+        // Für jeden der vermerkten Replacements:
+        for (int key: replacements.keySet()) {
+            // Suche den assoziierten Satz (in diesem Satz steht das Replacement)
+            Fragment[] sentence = container.getSubSet(replacements.get(key).getSentenceIndex());
+            // Iteriere über den Satz, suche dabei alle ART, PRELS im Satz
+            for (Fragment word: sentence) {
+                // Wenn aktuelles Wort ART/PRELS ist, ist es möglicherweise zu substituieren
+                if (word.tag.equals("ART") || word.tag.equals("PRELS")) {
+                    // erfahre Lemma und Kasus, Numerus, Genus des aktuellen Artikels
+                    Article lemma = db.getArticleFamily(word.token, language);
+                    // Wenn dieses Wort nun in Relation zum Modus des substituierten Wortes steht:
+                    if (lemma.getGender().equals(replacements.get(key).getOldGender())
+                        || word.index == replacements.get(key).getGlobalIndex() - 1) {
+                        // Suche nach einer Substitution mit identischer Familie und Substitutions-Modus
+                        String substitute = db.getArticleFor(lemma.getLemma(), language, replacements.get(key).getFall(), replacements.get(key).getGender(), replacements.get(key).getNumerus());
+                        // Prüfe, ob die Suche erfolgreich war:
+                        if (substitute != null) {
+                            container.addArticleReplacement(substitute, word.tag, replacements.get(key).getSentenceIndex(), word.wordIndex, word.index);
+                        }
+                    }
+                }
             }
-            // Create a copy of the word stripped of all sentence symbols and converted to lowercase
-            String predecessorAlphabetized = alphabetize(predecessor);
-            // If the copy could be found within the article database -> it's an article
-            String articleFamily = db.getArticleFamily(predecessorAlphabetized);
-            if (articleFamily == null) {
-                continue;
-            }
-            // Take casus, numerus, genus from the replacement and look for an article with equal c, n, g and of the word family that the original article was from
-            String replacement = db.getArticleFor(articleFamily,
-                                                  analysisContainer.getSubstantiveReplacements().get(key).getFall(),
-                                                  analysisContainer.getSubstantiveReplacements().get(key).getGender(),
-                                                  analysisContainer.getSubstantiveReplacements().get(key).getNumerus());
-            // Raise first Letter if necessary
-            if (Character.isUpperCase(predecessor.charAt(0))) {
-                replacement = Character.toUpperCase(replacement.charAt(0)) + replacement.substring(1);
-            }
-            // note it in analysisContainer
-            analysisContainer.addArticleReplacement(predecessor.replace(predecessorAlphabetized, replacement), key - 1);
         }
-        return analysisContainer;
+        return container;
     }
 }

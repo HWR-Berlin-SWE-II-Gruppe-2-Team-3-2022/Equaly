@@ -30,19 +30,20 @@ public class AnalysisContainer {
      * TODO: Update JavaDoc
      */
     public void addSubstantiveReplacement(Substitute substitute, int index_sentence, int index_word, int index_global) {
-        subSets[index_sentence][index_word] = new Fragment(substitute.getWord(), "NN", index_global);
+        subSets[index_sentence][index_word] = new Fragment(substitute.getWord(), "NN", index_global, index_word);
+        substitute.setGlobalIndex(index_global);
         substantiveReplacements.put(index_global, substitute);
     }
 
-    public void addArticleReplacement(String article, int index) {
-        //subSets[index][CONTEXTSIZE / 2] = article;
-        //articleIndices.add(index);
+    public void addArticleReplacement(String article, String tag, int index_sentence, int index_word, int index_global) {
+        subSets[index_sentence][index_word] = new Fragment(article, tag, index_global, index_word);
+        articleIndices.add(index_global);
     }
 
-    public String[] getSubSet(int index) {
-        //if (index >= 0 && index < subSets.length) {
-            //return subSets[index];
-        //}
-        return null;
+    public Fragment[] getSubSet(int index) {
+        if (index >= 0 && index < subSets.length) {
+            return subSets[index];
+        }
+        return new Fragment[0];
     }
 }

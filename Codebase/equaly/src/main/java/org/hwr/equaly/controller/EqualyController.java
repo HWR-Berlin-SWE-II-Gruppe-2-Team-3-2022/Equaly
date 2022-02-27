@@ -55,7 +55,7 @@ public class EqualyController {
     private String language;
 
     // Injecting configured application's name into variable
-    @Value("${spring.application.name}")
+    @Value("${spring.application.name} BETA")
     final String appName = null;
 
     /**
@@ -107,6 +107,7 @@ public class EqualyController {
         // Makes the last entered input Text stay beyond reload
         this.translateTicket = translateTicket;
         this.translateTicket.setInputText(this.translateTicket.getInputText().trim());
+        language = LocaleContextHolder.getLocale().getLanguage();
 
         // executing only if there really is any text
         if (!translateTicket.getInputText().isEmpty()) {
@@ -118,24 +119,12 @@ public class EqualyController {
             String[] tags = posTagger.run(language, tokens);
             // group tokens into sentences
             Fragment[][] splitText = textSplitter.createSubsets(tokens, tags);
-
             // run substantive replacement, replace them and make notes of replacements
-            AnalysisContainer processedSubstantives = wordExchanger.exchangeSubstantives(db, language, splitText);
-
-            // Nur zur Verifikation des aktuellen Arbeitsstandes!
-            // TODO: Mit nächstem Turn entfernen
-            HashMap<Integer, Substitute> x = processedSubstantives.getSubstantiveReplacements();
-            for (int key: x.keySet()) {
-                System.out.println(x.get(key).getWord());
-                System.out.println(x.get(key).getFall());
-                System.out.println(x.get(key).getGender());
-                System.out.println(x.get(key).getNumerus());
-                System.out.println(" ");
-                System.out.println(x.get(key).getOldFall());
-                System.out.println(x.get(key).getOldGender());
-                System.out.println(x.get(key).getOldNumerus());
-            }
-
+            AnalysisContainer processed = wordExchanger.exchangeSubstantives(db, language, splitText);
+            // run article replacement, replace them and make notes of replacements
+            processed = wordExchanger.exchangeArticles(db, language, processed);
+            // combine text fragements of last analysis step to form a sentence again
+            outputText = textMerger.merge(processed).trim();
         }
 
         /*
@@ -173,11 +162,9 @@ public class EqualyController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, params = "action=add")
     public String add(@ModelAttribute DBTicket dbTicket, Model model) {
-
         if (dbTicket.isNotEmpty()) {
             db.addSubstantive(dbTicket);
         }
-
         return "redirect:/add";
     }
 }

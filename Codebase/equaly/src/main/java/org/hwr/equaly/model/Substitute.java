@@ -8,6 +8,24 @@ public class Substitute {
     private String oldGender = "";
     private String oldFall = "";
     private String oldNumerus = "";
+    private int sentenceIndex = 0;
+    private int globalIndex = 0;
+
+    public int getGlobalIndex() {
+        return globalIndex;
+    }
+
+    public void setGlobalIndex(int globalIndex) {
+        this.globalIndex = globalIndex;
+    }
+
+    public int getSentenceIndex() {
+        return sentenceIndex;
+    }
+
+    public void setSentenceIndex(int sentenceIndex) {
+        this.sentenceIndex = sentenceIndex;
+    }
 
     public String getOldGender() {
         return oldGender;

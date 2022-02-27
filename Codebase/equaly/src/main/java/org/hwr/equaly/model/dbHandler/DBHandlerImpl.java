@@ -1,6 +1,7 @@
 package org.hwr.equaly.model.dbHandler;
 
 import com.github.pemistahl.lingua.api.Language;
+import org.hwr.equaly.model.Article;
 import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.tickets.DBTicket;
 import org.springframework.stereotype.Component;
@@ -240,22 +241,24 @@ public class DBHandlerImpl implements DBHandler {
     }
 
     @Override
-    public String getArticleFamily(String predecessorAlphabetized) {
+    public Article getArticleFamily(String token, Language language) {
+        String lang = getLanguageCode(language);
         try {
             ResultSet rs = conn.createStatement().executeQuery(
-                    "SELECT Familie FROM Artikel_DE WHERE Artikel = '" + predecessorAlphabetized.toLowerCase() + "';");
+                    "SELECT Familie, Fall, Numerus, Gender FROM Artikel_" + lang + " WHERE Artikel = '" + token.toLowerCase() + "';");
             rs.next();
-            return rs.getString(1);
+            return new Article(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
         } catch (SQLException e) {
             return null;
         }
     }
 
     @Override
-    public String getArticleFor(String articleFamily, String fall, String gender, String numerus) {
+    public String getArticleFor(String articleFamily, Language language, String fall, String gender, String numerus) {
+        String lang = getLanguageCode(language);
         try {
             ResultSet rs = conn.createStatement().executeQuery(
-                    "SELECT Artikel FROM Artikel_DE WHERE Familie = '" + articleFamily + "' AND Fall = '"+ fall + "' AND Gender = '" + gender + "' AND Numerus = '" + numerus + "';");
+                    "SELECT Artikel FROM Artikel_" + lang + " WHERE Familie = '" + articleFamily + "' AND Fall = '"+ fall + "' AND Gender = '" + gender + "' AND Numerus = '" + numerus + "' LIMIT 1;");
             rs.next();
             return rs.getString(1);
         } catch (SQLException e) {
