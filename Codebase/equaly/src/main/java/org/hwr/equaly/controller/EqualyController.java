@@ -8,7 +8,6 @@ import org.hwr.equaly.controller.textMerger.TextMerger;
 import org.hwr.equaly.controller.textSplitter.TextSplitter;
 import org.hwr.equaly.controller.tokenizer.Tokenizer;
 import org.hwr.equaly.model.Fragment;
-import org.hwr.equaly.model.Substitute;
 import org.hwr.equaly.model.tickets.DBTicket;
 import org.hwr.equaly.model.tickets.TranslateTicket;
 import org.hwr.equaly.model.AnalysisContainer;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Controller containing the logic used to interact with user through web frontend.
@@ -55,7 +53,7 @@ public class EqualyController {
     private String language;
 
     // Injecting configured application's name into variable
-    @Value("${spring.application.name} BETA")
+    @Value("${spring.application.name}")
     final String appName = null;
 
     /**
@@ -125,23 +123,9 @@ public class EqualyController {
             processed = wordExchanger.exchangeArticles(db, language, processed);
             // combine text fragements of last analysis step to form a sentence again
             outputText = textMerger.merge(processed).trim();
+        } else {
+            outputText = "";
         }
-
-        /*
-        if (!translateTicket.getInputText().trim().isEmpty()) {
-            // split up text into individual word fragments
-            String[][] splitText = textSplitter.createSubsets(translateTicket.getInputText());
-
-            // run substantive replacement, replace them and make notes of replacements
-            AnalysisContainer processedSubstantives = wordExchanger.exchangeSubstantives(db, splitText);
-
-            // run article replacement, replace them and make notes of replacements
-            AnalysisContainer processedArticles = wordExchanger.exchangeArticles(db, processedSubstantives);
-
-            // combine text fragements of last analysis step to form a sentence again
-            outputText = textMerger.merge(processedArticles).trim();
-        }
-        */
 
         return "redirect:/";
     }

@@ -16,7 +16,7 @@ public class TextSplitterImpl implements TextSplitter {
         for (int i = 0; i < tokens.length; i++) {
             sentence.add(new Fragment(tokens[i], tags[i], i, wordIndex));
             wordIndex++;
-            if (endOfSentence(tokens[i])) {
+            if (endOfSentence(tokens[i]) || i == tokens.length - 1) {
                 sentences.add(sentence.toArray(new Fragment[0]));
                 sentence = new ArrayList<>();
                 wordIndex = 0;
