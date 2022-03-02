@@ -18,11 +18,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServlet;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -69,6 +67,7 @@ public class EqualyController {
         tokenizer.initialize();
         posTagger.initialize();
         db.initialize();
+        language = LocaleContextHolder.getLocale().getLanguage();
         this.languageTagger = languageTagger;
         this.tokenizer = tokenizer;
         this.posTagger = posTagger;
@@ -85,13 +84,24 @@ public class EqualyController {
         model.addAttribute(thyme.TRANSLATE, translateTicket);
         model.addAttribute(thyme.APPNAME, appName);
         model.addAttribute(thyme.OUTPUT, outputText);
-        language = LocaleContextHolder.getLocale().getLanguage();
 
         if (language.equals("de")) {
             return "main_de";
         }
 
         return "main_en";
+    }
+
+    @RequestMapping(value = "/languageDE", method = RequestMethod.POST)
+    public String setLanguageDE() {
+        language = "de";
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/languageEN", method = RequestMethod.POST)
+    public String setLanguageEN() {
+        language = "en";
+        return "redirect:/";
     }
 
     /**
