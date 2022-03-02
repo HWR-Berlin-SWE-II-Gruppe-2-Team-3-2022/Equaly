@@ -19,8 +19,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServlet;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -88,7 +86,6 @@ public class EqualyController {
         if (language.equals("de")) {
             return "main_de";
         }
-
         return "main_en";
     }
 
@@ -104,6 +101,13 @@ public class EqualyController {
         return "redirect:/";
     }
 
+    @RequestMapping(value = "/clear", method = RequestMethod.POST)
+    public String clearInput() {
+        translateTicket.setInputText("");
+        outputText = "";
+        return "redirect:/";
+    }
+
     /**
      * Receiving the text entered by the user to be gendered.
      * @param translateTicket filled by and now received back from the frontend, contains user-entered text
@@ -115,8 +119,6 @@ public class EqualyController {
         // Makes the last entered input Text stay beyond reload
         this.translateTicket = translateTicket;
         this.translateTicket.setInputText(this.translateTicket.getInputText().trim());
-        language = LocaleContextHolder.getLocale().getLanguage();
-
         // executing only if there really is any text
         if (!translateTicket.getInputText().isEmpty()) {
             // detect text's language (de/en only for now)
@@ -136,7 +138,6 @@ public class EqualyController {
         } else {
             outputText = "";
         }
-
         return "redirect:/";
     }
 

@@ -11,7 +11,7 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
     <link th:href="@{/css/bootstrap-multiselect.css}" rel="stylesheet" />
 
-    <script type="text/javascript" th:src="@{/js/src/equaly.js}"></script>
+    <script type="text/javascript" th:src="@{/js/src/equaly_en.js}"></script>
     <script type="text/javascript" th:src="@{/js/src/bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/src/bootstrap-multiselect.min.js}"></script>
 </head>
@@ -48,7 +48,10 @@
                 </form>
             </div>
             <div class="col-4">
-                <textarea th:text="*{outputText}" class="form-control" placeholder="Gendered Text" name="output[body]" rows="1" cols="50" wrap="soft" style="box-shadow: 0 0 5px darkgray; -webkit-box-shadow: 0 0 5px darkgray; -moz-box-shadow: 0 0 5px darkgray; background-color: rgba(250,250,250,255); border-color: darkgray; resize: none; height: 350px; width: 100%" id="output_text_area"></textarea>
+                <div class="mb-3">
+                    <textarea th:text="*{outputText}" class="form-control" placeholder="Gendered Text" name="output[body]" rows="1" cols="50" wrap="soft" style="box-shadow: 0 0 5px darkgray; -webkit-box-shadow: 0 0 5px darkgray; -moz-box-shadow: 0 0 5px darkgray; background-color: rgba(250,250,250,255); border-color: darkgray; resize: none; height: 350px; width: 100%" id="output_text_area"></textarea>
+                </div>
+                <div id="clear-div"></div>
             </div>
         </div>
     </div>
