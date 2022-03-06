@@ -5,7 +5,7 @@ window.onload = function(){
 
     if (out !== null && out.value !== "") {
         clear.innerHTML = "<form id=\"clear-form\" action=\"/clear\" method=\"post\">\n" +
-                          "     <button id=\"clear-button\" name=\"action\" value=\"clear\" type=\"submit\" class=\"btn btn-primary\" style=\"border: none; background-color: rgba(230,48,27,0.8) !important; width: 100% !important; float: right\">Reset</button>\n" +
+                          "     <button id=\"clear-button\" name=\"action\" value=\"clear\" type=\"submit\" class=\"btn btn-primary\" style=\"border: none; background-color: rgba(255, 58, 33, 1) !important; width: 100% !important; float: right\">Reset</button>\n" +
                           "</form>";
     } else {
         clear.innerHTML = "";
