@@ -146,7 +146,7 @@ public class EqualyController {
         // replaces placeholder appName in html with content of appName
         model.addAttribute(thyme.APPNAME, appName);
 
-        ArrayList<String> genderList = new ArrayList<>(Arrays.asList("m", "f", "n"));
+        ArrayList<String> genderList = new ArrayList<>(Arrays.asList("m", "f", "n", "m/f"));
         ArrayList<String> fallList = new ArrayList<>(Arrays.asList("Nominativ", "Genitiv", "Dativ", "Akkusativ"));
 
         model.addAttribute("genderList", genderList);

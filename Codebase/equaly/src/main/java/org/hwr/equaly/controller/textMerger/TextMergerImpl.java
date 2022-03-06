@@ -24,6 +24,6 @@ public class TextMergerImpl implements TextMerger {
                 }
             }
         }
-        return result.toString();
+        return result.toString().replaceAll(" / ", "/");
     }
 }
