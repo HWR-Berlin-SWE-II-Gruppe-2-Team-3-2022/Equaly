@@ -9,6 +9,7 @@ import org.hwr.equaly.model.dbHandler.DBHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Handling the substitution process for words and articles through a step-by-step set of methods
@@ -33,13 +34,26 @@ public class WordExchangerImpl implements WordExchanger {
         for (int i = 0; i < subSets.length; i++) {
             for (int j = 0; j < subSets[i].length; j++) {
                 // Wenn das aktuelle Wort mit dem Tag "NN" versehen wurde (explizit kein "NE" (Eigenname))
-                if (subSets[i][j].tag.equals("NN")) {
+                if (subSets[i][j].tag.equals("NN") || subSets[i][j].tag.equals("PPER") || (language == Language.ENGLISH && subSets[i][j].tag.equals("PRP"))) {
                     // Suche ein Ersatzwort (das oder "" kommt als Rückgabe) in der DB
                     // Vermerke hier auch den alten Modus für spätere Artikelanalyse
-                    Substitute substitute = db.getSubstantiveFor(subSets[i][j].token, language);
+                    Substitute substitute;
+                    if (language == Language.GERMAN) {
+                        substitute = db.getSubstantiveFor(subSets[i][j].token, language);
+                    } else {
+                        substitute = db.getSubstantiveFor(subSets[i][j].token.toLowerCase(), language);
+                    }
                     // Wenn Ersatzwort nicht leer:
                     if (!substitute.getWord().isEmpty()) {
                         substitute.setSentenceIndex(i);
+                        if (language == Language.ENGLISH && j > 0) {
+                            if (subSets[i][j-1].token.equals("a") && "aeiou".contains("" + substitute.getWord().charAt(0))) {
+                                container.update(i, j-1, "an");
+                            } else if (subSets[i][j-1].token.equals("an") && !"aeiou".contains("" + substitute.getWord().charAt(0))) {
+                                container.update(i, j-1, "a");
+                            }
+                        }
+
                         // Füge Ersatzwort dem AnalysisContainer mit allen Metadaten an
                         container.addSubstantiveReplacement(substitute, i, j, subSets[i][j].index);
                     }

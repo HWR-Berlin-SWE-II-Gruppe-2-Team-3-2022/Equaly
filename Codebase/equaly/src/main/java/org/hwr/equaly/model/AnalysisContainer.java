@@ -43,6 +43,10 @@ public class AnalysisContainer {
         articleIndices.add(index_global);
     }
 
+    public void update(int sentenceIndex, int wordIndex, String replacement) {
+        subSets[sentenceIndex][wordIndex].token = replacement;
+    }
+
     public Fragment[] getSubSet(int index) {
         if (index >= 0 && index < subSets.length) {
             return subSets[index];
