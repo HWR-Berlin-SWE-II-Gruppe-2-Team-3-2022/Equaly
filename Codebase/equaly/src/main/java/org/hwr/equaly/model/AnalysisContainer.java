@@ -3,6 +3,9 @@ package org.hwr.equaly.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Carries the text split up by sentence and by word aswell as analysis results
+ */
 public class AnalysisContainer {
 
     private Fragment[][] subSets;

@@ -5,7 +5,7 @@ import org.hwr.equaly.controller.exchanger.WordExchanger;
 import org.hwr.equaly.controller.languageTagger.LanguageTagger;
 import org.hwr.equaly.controller.posTagger.POSTagger;
 import org.hwr.equaly.controller.textMerger.TextMerger;
-import org.hwr.equaly.controller.textSplitter.TextSplitter;
+import org.hwr.equaly.controller.setFormatter.SetFormatter;
 import org.hwr.equaly.controller.tokenizer.Tokenizer;
 import org.hwr.equaly.model.Fragment;
 import org.hwr.equaly.model.tickets.DBTicket;
@@ -34,7 +34,7 @@ public class EqualyController {
     @Autowired
     private ThymeleafAttributeContainer thyme;
     @Autowired
-    private TextSplitter textSplitter;
+    private SetFormatter textSplitter;
     @Autowired
     private WordExchanger wordExchanger;
     @Autowired
@@ -89,18 +89,33 @@ public class EqualyController {
         return "main_en";
     }
 
+    /**
+     * Requests to here result in Equaly changing the frontend language to german.
+     * This does not affect the language processing, both german and english text still can be entered.
+     * @return redirecting to the startpage in order to load new frontend language
+     */
     @RequestMapping(value = "/languageDE", method = RequestMethod.POST)
     public String setLanguageDE() {
         language = "de";
         return "redirect:/";
     }
 
+    /**
+     * Requests to here result in Equaly changing the frontend language to english.
+     * This does not affect the language processing, both german and english text still can be entered.
+     * @return redirecting to the startpage in order to load new frontend language
+     */
     @RequestMapping(value = "/languageEN", method = RequestMethod.POST)
     public String setLanguageEN() {
         language = "en";
         return "redirect:/";
     }
 
+    /**
+     * Requests to here trigger clearing of inputs to the translation/gendering method
+     * UI gets reset/emptied, backend gets reset/emptied
+     * @return redirecting to startpage in order to load cleared text fields
+     */
     @RequestMapping(value = "/clear", method = RequestMethod.POST)
     public String clearInput() {
         translateTicket.setInputText("");
@@ -110,9 +125,9 @@ public class EqualyController {
 
     /**
      * Receiving the text entered by the user to be gendered.
-     * @param translateTicket filled by and now received back from the frontend, contains user-entered text
-     * @param model works a container for data exchange between website and Spring backend
-     * @return redirecting to the start page
+     * @param translateTicket filled by user, received here from the frontend, contains user-entered text
+     * @param model works a container for data exchange between Web frontend and Spring backend
+     * @return redirecting to the start page to load results
      */
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String translate(@ModelAttribute TranslateTicket translateTicket, Model model) {
@@ -141,6 +156,7 @@ public class EqualyController {
         return "redirect:/";
     }
 
+    // TODO: Remove before flight
     @GetMapping("/add")
     public String add(Model model) {
         // replaces placeholder appName in html with content of appName
@@ -155,6 +171,7 @@ public class EqualyController {
         return "add";
     }
 
+    // TODO: Remove before flight
     @RequestMapping(value = "/add", method = RequestMethod.POST, params = "action=add")
     public String add(@ModelAttribute DBTicket dbTicket, Model model) {
         if (dbTicket.isNotEmpty()) {

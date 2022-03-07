@@ -28,13 +28,15 @@ public interface DBHandler {
 
     /**
      * Find the current article's family - that is, if the current word is an article.
-     * TODO: JavaDoc Update
+     * Limit search to word sets for a given language.
+     * @param token the potential article
+     * @param language the text's / token set's language
      * @return null if nothing was found, the word family identifying string otherwise
      */
     Article getArticleFamily(String token, Language language);
 
     /**
-     * Given an article family, find an article for the given casus, numerus, genus
+     * Given an article family and details about a current article's state and its desired state, find an article for the given casus, numerus, genus
      * @param articleFamily identifies the word group of the article
      * @param fall casus (Nominativ, Genitiv etc.)
      * @param gender (m, f, n)

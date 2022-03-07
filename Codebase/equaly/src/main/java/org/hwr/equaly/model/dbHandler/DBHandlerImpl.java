@@ -13,6 +13,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Takes care of every interaction with a given database file.
+ * Processes DB requests and returns substantive or article information
+ * for either german or english words
+ */
 @Component
 public class DBHandlerImpl implements DBHandler {
 
@@ -20,6 +25,10 @@ public class DBHandlerImpl implements DBHandler {
     private String path = "./data/equaly.db";
     private String url = "";
 
+    /**
+     * Establish a connection between Database file and Java backend.
+     * Connection should persist to rule out tampering while at work.
+     */
     @Override
     public void initialize() {
         this.url = "jdbc:sqlite:" + path;
@@ -44,7 +53,7 @@ public class DBHandlerImpl implements DBHandler {
                          " Wort_ID INTEGER PRIMARY KEY," +
                          " Fall TEXT CHECK( Fall IN ('Nominativ','Genitiv','Dativ', 'Akkusativ') ) NOT NULL," +
                          " Wort TEXT NOT NULL," +
-                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n') ) NOT NULL," +
+                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n', 'm/f') ) NOT NULL," +
                          " Numerus TEXT CHECK ( Numerus IN ('Singular', 'Plural')) NOT NULL" +
                          ");";
 
@@ -60,7 +69,7 @@ public class DBHandlerImpl implements DBHandler {
                          " Artikel_ID INTEGER PRIMARY KEY, " +
                          " Artikel TEXT NOT NULL," +
                          " Fall TEXT CHECK( Fall IN ('Nominativ','Genitiv','Dativ', 'Akkusativ') ) NOT NULL," +
-                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n') ) NOT NULL," +
+                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n', 'm/f') ) NOT NULL," +
                          " Numerus TEXT CHECK ( Numerus IN ('Singular', 'Plural')) NOT NULL," +
                          " Familie TEXT NOT NULL" +
                          ");";
@@ -70,7 +79,7 @@ public class DBHandlerImpl implements DBHandler {
                          " Wort_ID INTEGER PRIMARY KEY," +
                          " Fall TEXT CHECK( Fall IN ('Nominativ','Genitiv','Dativ', 'Akkusativ') ) NOT NULL," +
                          " Wort TEXT NOT NULL," +
-                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n') ) NOT NULL," +
+                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n', 'm/f') ) NOT NULL," +
                          " Numerus TEXT CHECK ( Numerus IN ('Singular', 'Plural')) NOT NULL" +
                          ");";
 
@@ -86,11 +95,10 @@ public class DBHandlerImpl implements DBHandler {
                          " Artikel_ID INTEGER PRIMARY KEY, " +
                          " Artikel TEXT NOT NULL," +
                          " Fall TEXT CHECK( Fall IN ('Nominativ','Genitiv','Dativ', 'Akkusativ') ) NOT NULL," +
-                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n') ) NOT NULL," +
+                         " Gender TEXT CHECK ( Gender IN ('m', 'f', 'n', 'm/f') ) NOT NULL," +
                          " Numerus TEXT CHECK ( Numerus IN ('Singular', 'Plural')) NOT NULL," +
                          " Familie TEXT NOT NULL" +
                          ");";
-
         try {
             // Create a new DB if genuinely none could be found
             conn.createStatement().execute(wort_de);
@@ -104,6 +112,12 @@ public class DBHandlerImpl implements DBHandler {
         }
     }
 
+    /**
+     * Given a substantive, head into the DB to find a replacement
+     * and return either this replacement or "" if none could be found
+     * @param substantive the substantive for which a replacement is to be found
+     * @return the replacement or an empty string of no replacement could be found
+     */
     @Override
     public Substitute getSubstantiveFor(String substantive, Language language) {
         Substitute replacement = new Substitute();
@@ -195,6 +209,10 @@ public class DBHandlerImpl implements DBHandler {
         return null;
     }
 
+    /**
+     * Add a Substantive with case and gender aswell as (maybe) a replacement for this word.
+     * @param dbTicket contains everything about the information on new words to be added
+     */
     @Override
     public void addSubstantive(DBTicket dbTicket) {
         // Look if added word is there already (with word, case and gender all together)
@@ -234,12 +252,21 @@ public class DBHandlerImpl implements DBHandler {
             if (!(replacementExistedAlready && wordExistedAlready)) {
                 conn.createStatement().executeUpdate("INSERT INTO Wort_ersetzt_Wort_" + language + " VALUES (" + wordID + ", " + replacementID + ");");
             }
+
             // else: don't do anything, somebody is trying to be very funny here
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Find the current article's family - that is, if the current word is an article.
+     * Limit search to word sets for a given language.
+     * @param token the potential article
+     * @param language the text's / token set's language
+     * @return null if nothing was found, the word family identifying string otherwise
+     */
     @Override
     public Article getArticleFamily(String token, Language language) {
         String lang = getLanguageCode(language);
@@ -253,6 +280,14 @@ public class DBHandlerImpl implements DBHandler {
         }
     }
 
+    /**
+     * Given an article family and details about a current article's state and its desired state, find an article for the given casus, numerus, genus
+     * @param articleFamily identifies the word group of the article
+     * @param fall casus (Nominativ, Genitiv etc.)
+     * @param gender (m, f, n)
+     * @param numerus (singular, plural)
+     * @return the article that fits the search description or null if this could not be satisfied.
+     */
     @Override
     public String getArticleFor(String articleFamily, String token, Language language, String fall, String gender, String numerus) {
         String lang = getLanguageCode(language);

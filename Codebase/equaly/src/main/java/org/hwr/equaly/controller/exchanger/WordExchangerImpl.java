@@ -10,9 +10,21 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
+/**
+ * Handling the substitution process for words and articles through a step-by-step set of methods
+ * to first exchange substantives and then articles.
+ */
 @Component
 public class WordExchangerImpl implements WordExchanger {
 
+    /**
+     * Takes in Fragments split up into sentences (x) and their word tokens (y), processes the fragment values and substitutes
+     * fragments identified as substitutable substantives, notes which words where replaced where in the fragment set.
+     * @param db this dbHandler carries the database connection we continuously use,
+     *           aswell as all the logic necessary for the WordExchanger to interact with the DB
+     * @param subSets The two-dimensionally split up and spread out input text (x: Sentence index, y: Word index for sentence x)
+     * @return a container for the the same 2D fragment array, that also carries notes on which substantive was replaced how and where
+     */
     @Override
     public AnalysisContainer exchangeSubstantives(DBHandler db, Language language, Fragment[][] subSets) {
         // transform subSets to extended subSets objects for marking of substantive indices
@@ -20,7 +32,7 @@ public class WordExchangerImpl implements WordExchanger {
         // Pro Satz, Pro Wort:
         for (int i = 0; i < subSets.length; i++) {
             for (int j = 0; j < subSets[i].length; j++) {
-                // Wenn das aktuelle Wort mit dem Tag "NN" versehen wurde:
+                // Wenn das aktuelle Wort mit dem Tag "NN" versehen wurde (explizit kein "NE" (Eigenname))
                 if (subSets[i][j].tag.equals("NN")) {
                     // Suche ein Ersatzwort (das oder "" kommt als Rückgabe) in der DB
                     // Vermerke hier auch den alten Modus für spätere Artikelanalyse
@@ -34,19 +46,18 @@ public class WordExchangerImpl implements WordExchanger {
                 }
             }
         }
-
         return container;
     }
 
     /**
-     * Remove all non-alphabetic characters (that is all characters not belonging to the german alphabet) from a String
-     * @param word this will be reduced to an alphabetic-only String
-     * @return word with only its letter contents
+     * Takes in an AnalysisContainer carrying a set of Fragments that already may have undergone the substantive exchange process
+     * Uses gathered informations from that previous exchange process to derive necessities for article replacements, carries them out
+     * and notes them aswell in the then returned, modified AnalysisContainer.
+     * @param db this dbHandler carries the connection we continuously use,
+     *           aswell as all the logic necessary for the WordExchanger to interact with the DB
+     * @return the analysisContainer now carrying the fully gender-adapted text (regarding substantives and their associated articles)
+     * aswell as metadata on what was exchanged and how this was done
      */
-    private String alphabetize(String word){
-        return word.replaceAll("[^a-zA-ZäÄöÖüÜßẞ-]", "");
-    }
-
     @Override
     public AnalysisContainer exchangeArticles(DBHandler db, Language language, AnalysisContainer container) {
         HashMap<Integer, Substitute> replacements = container.getSubstantiveReplacements();
