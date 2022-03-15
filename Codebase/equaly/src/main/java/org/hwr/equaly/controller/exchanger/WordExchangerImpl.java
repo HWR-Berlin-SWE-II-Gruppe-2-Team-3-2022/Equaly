@@ -34,7 +34,6 @@ public class WordExchangerImpl implements WordExchanger {
         for (int i = 0; i < subSets.length; i++) {
             for (int j = 0; j < subSets[i].length; j++) {
                 // Wenn das aktuelle Wort mit dem Tag "NN" versehen wurde (explizit kein "NE" (Eigenname))
-                System.out.println(subSets[i][j].token + " - " + subSets[i][j].tag + " - " + language);
                 if (subSets[i][j].tag.equals("NN") || subSets[i][j].tag.equals("PPER") || (language == Language.ENGLISH && subSets[i][j].tag.equals("PRP"))) {
                     // Suche ein Ersatzwort (das oder "" kommt als Rückgabe) in der DB
                     // Vermerke hier auch den alten Modus für spätere Artikelanalyse
