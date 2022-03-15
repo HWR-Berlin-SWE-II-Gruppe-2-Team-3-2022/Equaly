@@ -7,12 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SetFormatterTests {
 
     @Test
     void CreateSubsetsTest() {
-        SetFormatterImpl TestSetFormatterImpl = new SetFormatterImpl();
+        SetFormatterImpl TestSetFormatterImpl0 = new SetFormatterImpl();
         //Tokens der Beispieleingabe
         String[] tokens = new String[1];
         tokens[0] = "Frau";
@@ -33,9 +34,15 @@ public class SetFormatterTests {
         Fragment[][] testresult = testsentences.toArray(testmatrix);
 
         //tatsächliches ReturnValue der Methode
-        Fragment[][] actualresult = TestSetFormatterImpl.createSubsets(tokens, tags);
+        Fragment[][] actualresult = TestSetFormatterImpl0.createSubsets(tokens, tags);
 
-        assert(actualresult.equals(testresult));
+        //Prüfen auf inhaltliche Gleichheit
+        boolean eq1 = Objects.equals(testresult[0][0].token, actualresult[0][0].token);
+        assert(eq1);
+        boolean eq2 = Objects.equals(testresult[0][0].tag, actualresult[0][0].tag);
+        assert(eq2);
+        boolean eq3 = Objects.equals(testresult[0][0].index, actualresult[0][0].index);
+        assert(eq3);
 
     }
 
