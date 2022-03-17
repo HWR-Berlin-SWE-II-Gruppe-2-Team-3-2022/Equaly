@@ -24,4 +24,4 @@ It takes in syntactically correct, german or english text. Based on that it gene
 5. If you want to shut down Equaly, press `CTRL + C` in the console that is running the application.
 
 ## Contribution
-Pull request are very welcome, please open an issue in advance.
+Pull requests are very welcome, please open an issue in advance.
