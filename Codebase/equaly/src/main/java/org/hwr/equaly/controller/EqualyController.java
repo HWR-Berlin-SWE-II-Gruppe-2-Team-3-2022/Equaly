@@ -156,27 +156,4 @@ public class EqualyController {
         return "redirect:/";
     }
 
-    // TODO: Remove before flight
-    @GetMapping("/add")
-    public String add(Model model) {
-        // replaces placeholder appName in html with content of appName
-        model.addAttribute(thyme.APPNAME, appName);
-
-        ArrayList<String> genderList = new ArrayList<>(Arrays.asList("m", "f", "n", "m/f"));
-        ArrayList<String> fallList = new ArrayList<>(Arrays.asList("Nominativ", "Genitiv", "Dativ", "Akkusativ"));
-
-        model.addAttribute("genderList", genderList);
-        model.addAttribute("fallList", fallList);
-        model.addAttribute("dbTicket", new DBTicket());
-        return "add";
-    }
-
-    // TODO: Remove before flight
-    @RequestMapping(value = "/add", method = RequestMethod.POST, params = "action=add")
-    public String add(@ModelAttribute DBTicket dbTicket, Model model) {
-        if (dbTicket.isNotEmpty()) {
-            db.addSubstantive(dbTicket);
-        }
-        return "redirect:/add";
-    }
 }
