@@ -15,13 +15,15 @@ It takes in syntactically correct, german or english text. Based on that it gene
 ## How To Run It
 
 1. Download the most recent release from the releases page.
-2. Run the included `.jar` file from your command line like so: `java -jar genderly.jar`
+2. Run the included `.jar` file from your command line like so: `java -jar equaly.jar`
 3. Open your favourite browser and navigate to here: `http://localhost:8081/`
     You should see something like this:
-    
-<!-- Placeholder for new Screenshot to be added -->
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/29037335/158882202-3e6e98f6-fd9f-4c50-ae38-82ef30af911b.png" alt="Equaly UI" height="400">
+</p>
 
 5. If you want to shut down Equaly, press `CTRL + C` in the console that is running the application.
 
 ## Contribution
-Pull request are very welcome, please open an issue in advance.
+Pull requests are very welcome, please open an issue in advance.

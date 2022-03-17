@@ -37,17 +37,17 @@ jobs:
           java-version: '8'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn -B package --file ./Codebase/genderly/pom.xml
+        run: mvn -B package --file ./Codebase/equaly/pom.xml
 
 
-      - name: Assemble Prototyp_IT20_KursB_8
+      - name: Assemble Software_IT20_KursB_8
         run: |
-          mkdir Prototyp_IT20_KursB_8
-          mv ./Codebase/genderly/target/genderly.jar ./Prototyp_IT20_KursB_8/genderly.jar
-          mv ./Codebase/genderly/data ./Prototyp_IT20_KursB_8/data
-          mv ./Codebase/genderly/run_windows.bat ./Prototyp_IT20_KursB_8/run_windows.bat
-          mv ./Codebase/genderly/run_linux.sh ./Prototyp_IT20_KursB_8/run_linux.sh
-          mv ./Codebase/genderly/run_macos.sh ./Prototyp_IT20_KursB_8/run_macos.sh
+          mkdir Software_IT20_KursB_8
+          mv ./Codebase/equaly/target/equaly.jar ./Software_IT20_KursB_8/equaly.jar
+          mv ./Codebase/equaly/data ./Software_IT20_KursB_8/data
+          mv ./Codebase/equaly/run_windows.bat ./Software_IT20_KursB_8/run_windows.bat
+          mv ./Codebase/equaly/run_linux.sh ./Software_IT20_KursB_8/run_linux.sh
+          mv ./Codebase/equaly/run_macos.sh ./Software_IT20_KursB_8/run_macos.sh
           
 
       - name: Create Zip
@@ -57,10 +57,10 @@ jobs:
         with:
           # Files or directories to zip
           files: |
-           /Prototyp_IT20_KursB_8
+           /Software_IT20_KursB_8
            
           # Name of output zip file
-          dest: Prototyp_IT20_KursB_8.zip
+          dest: Software_IT20_KursB_8.zip
           # Whether to add subdirectories to simply zip all files to the root
           recursive: false
 
@@ -120,9 +120,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           milestone: '${{ steps.gitversion.outputs.majorMinorPatch }}'
           name: 'v${{ steps.gitversion.outputs.semVer }}'
-          owner: 'HWR-Berlin-SWE-I-Gruppe-2-Team-3-2021'
-          repository: 'Genderly'
+          owner: 'HWR-Berlin-SWE-II-Gruppe-2-Team-3-2022'
+          repository: 'Equaly'
           assets: |
-            ./Prototyp_IT20_KursB_8.zip
-
-            
+            ./Software_IT20_KursB_8.zip

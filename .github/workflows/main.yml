@@ -40,7 +40,7 @@ jobs:
           java-version: '8'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn -B package --file ./Codebase/genderly/pom.xml
+        run: mvn -B package --file ./Codebase/equaly/pom.xml
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.9.7
